@@ -1,0 +1,111 @@
+---
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+	headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+---
+
+<nav aria-label="Table of contents">
+	<p class="toc-label">On this page</p>
+	<ol>
+		{headings.map((h) => (
+			<li>
+				<a href={`#${h.slug}`}>{h.text}</a>
+			</li>
+		))}
+	</ol>
+</nav>
+
+<style>
+	nav {
+		border-left: 2px solid rgb(var(--gray-light));
+		padding-left: 1rem;
+		font-size: 0.875rem;
+	}
+	.toc-label {
+		margin: 0 0 0.75rem;
+		font-size: 0.7rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: rgb(var(--gray));
+	}
+	ol {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+	li {
+		line-height: 1.4;
+	}
+	a {
+		color: rgb(var(--gray));
+		text-decoration: none;
+		transition: color 0.15s ease;
+		display: block;
+	}
+	a:visited {
+		color: rgb(var(--gray));
+	}
+	a:hover {
+		color: var(--accent);
+	}
+	a.active {
+		color: var(--accent);
+		font-weight: 600;
+	}
+</style>
+
+<script>
+	let cleanup: (() => void) | null = null;
+
+	function initToc() {
+		if (cleanup) cleanup();
+
+		const links = document.querySelectorAll<HTMLAnchorElement>(
+			'nav[aria-label="Table of contents"] a'
+		);
+		if (links.length === 0) return;
+
+		const headingEls = [...links]
+			.map((link) => {
+				const id = link.getAttribute('href')?.slice(1);
+				return id ? document.getElementById(id) : null;
+			})
+			.filter((el): el is HTMLElement => el !== null);
+
+		function updateActive() {
+			const atBottom =
+				window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+
+			let activeId = atBottom
+				? (headingEls.at(-1)?.id ?? '')
+				: '';
+
+			if (!atBottom) {
+				for (const heading of headingEls) {
+					if (heading.getBoundingClientRect().top <= 120) {
+						activeId = heading.id;
+					}
+				}
+			}
+
+			links.forEach((link) => {
+				link.classList.toggle('active', link.getAttribute('href') === `#${activeId}`);
+			});
+		}
+
+		window.addEventListener('scroll', updateActive, { passive: true });
+		updateActive();
+		cleanup = () => window.removeEventListener('scroll', updateActive);
+	}
+
+	initToc();
+	document.addEventListener('astro:page-load', initToc);
+</script>
