@@ -7,7 +7,6 @@
 	},
 	"scripts": {
 		"dev": "astro dev",
-		"prebuild": "playwright install chromium",
 		"build": "astro build",
 		"preview": "pnpm run build && wrangler dev",
 		"astro": "astro",
