@@ -170,15 +170,6 @@ sup {
 	white-space: nowrap;
 	border: 0;
 }
-a[href*="sitecore.com"],
-a[href*="sitecorecontenthub.com"] {
-	color: var(--text-bright);
-}
-
-a[href*="sitecore.com"]:visited,
-a[href*="sitecorecontenthub.com"]:visited {
-	color: var(--text-bright);
-}
 
 a[href*="sitecore.com"]::after,
 a[href*="sitecorecontenthub.com"]::after {

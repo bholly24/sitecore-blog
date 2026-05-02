@@ -1,23 +1,23 @@
 ---
 title: 'SitecoreAI Context ID Security'
-description: 'Best practices to securely manage Context IDs for security across enterprise projects'
+description: 'Discover best practices to securely manage SitecoreAI Context IDs with the Content SDK'
 pubDate: 'May 02 2026'
 heroImage: '../../assets/posts/scoping.jpg'
 ---
 
 ## Intro
+There has been some confusion in the Sitecore community around securely managing the `SITECORE_EDGE_CONTEXT_ID` as applications adopt the [Content SDK](https://doc.sitecore.com/sai/en/developers/content-sdk/20/sitecore-content-sdk-for-sitecoreai.html) for SitecoreAI.
+This post explores the confusion, explains why you not to include your fully-scoped edge token in the browser bundle, and the correct pattern: scoped context IDs.
 
 The `SITECORE_EDGE_CONTEXT_ID` allows for fetching published data from your SitecoreAI tenant.
-By default, each environment in SitecoreAI is provisioned with a preview and a live version of this token.
-The preview token makes requests against a special endpoint that serves content from the database (for content managers and small-scale preview sites)
-while the live version makes requests against Experience Edge.
+By default, each environment in SitecoreAI is provisioned with a preview and a live version of this token.[^token] Previously, Sitecore JSS <span class="tag-deprecated">deprecated</span> required your token in a server-side environment variable `SITECORE_EDGE_CONTEXT_ID`,
+but the new headless delivery layer for SitecoreAI, the Content SDK, introduces a client-side value `NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID` alongside that server-side token.[^public]
 
-Previously, Sitecore JSS <span class="tag-deprecated">deprecated</span> required a single server-side environment variable `SITECORE_EDGE_CONTEXT_ID`,
-but the new headless delivery layer for SitecoreAI, the Content SDK, introduces a client-side value `NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID`[^1].
-[^1]: If you're confused about public/private or client-side/server-side variables check out the [Next docs](https://nextjs.org/docs/pages/guides/environment-variables#bundling-environment-variables-for-the-browser).
+[^token]: The preview token makes requests against the [Preview endpoint](https://doc.sitecore.com/sai/en/developers/sitecoreai/the-preview-graphql-endpoint.html) that serves content from CM (for content managers and small-scale preview sites) while the live version makes requests against Experience Edge.
+[^public]: If you're confused about public/private or client-side/server-side variables check out the [Next docs](https://nextjs.org/docs/pages/guides/environment-variables#bundling-environment-variables-for-the-browser).
 
-The [migration documentation](https://doc.sitecore.com/sai/en/developers/content-sdk/10/upgrade-jss-22-0-next-js-apps-to-content-sdk-1-5-1.html#update-configurations-and-environment-variables)[^2] suggests you may need to create this public environment variable, but **this will expose your token to the front end.**
-[^2]: Extracted 4/30/2026. Sitecore said they would work on updating this documentation to call out scoping as the correct path forward.
+The [migration documentation](https://doc.sitecore.com/sai/en/developers/content-sdk/10/upgrade-jss-22-0-next-js-apps-to-content-sdk-1-5-1.html#update-configurations-and-environment-variables)[^extracted] suggests you may need to create this public environment variable, but **this will expose your token to the front end.**
+[^extracted]: Extracted 5/02/2026. Sitecore said they would work on updating this documentation to call out scoping as the correct path forward.
 
 > If needed, create NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID with the same value.
 > Doing this will expose your context ID secret on the client.
@@ -26,10 +26,10 @@ There is no mention of an alternative in the migration documents, and the Develo
 reinforce the same insecure default. When you copy development variables, your server-side and client-side Sitecore Context IDs are always the same value.
 
 While the docs might seem to suggest it is rare for `NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID` to be necessary,
-it is required for BYOC forms and many other basic Sitecore features, as you can see in the `Bootstrap.tsx` file. [^3]
+it is required for BYOC forms and many other basic Sitecore features, as you can see in the `Bootstrap.tsx` file. [^code-date]
 None of these features work if `config.api.edge?.clientContextId` is not set.
 
-[^3]: Extracted 5/1/2026 from Sitecore's [XM Cloud Starter repository](https://github.com/Sitecore/xmcloud-starter-js)
+[^code-date]: Extracted 5/1/2026 from Sitecore's [XM Cloud Starter repository](https://github.com/Sitecore/xmcloud-starter-js)
 
 ```typescript
 if (config.api.edge?.clientContextId) {
@@ -40,15 +40,8 @@ if (config.api.edge?.clientContextId) {
             siteName: siteName || config.defaultSite,
         },
         plugins: [
-            analyticsPlugin({
-                options: {
-                    enableCookie: true,
-                    cookieDomain: window.location.hostname.replace(/^www\./, ''),
-                },
-                adapter: analyticsBrowserAdapter(),
-            }),
-            eventsPlugin(),
-        ],
+        // Code omitted
+        ]
     });
 }
 ```
@@ -60,11 +53,11 @@ However, this broadens your system's attack surface by allowing for unfettered c
 
 ### Content enumeration
 
-An unscoped edge token is an easy vector for site-wide enumeration[^4], in which an attacker can query standard root paths and traverse your entire content tree by recursively requesting the `children` of your root items.
+An unscoped edge token is an easy vector for site-wide enumeration[^enumeration], in which an attacker can query standard root paths and traverse your entire content tree by recursively requesting the `children` of your root items.
 For the vast majority of sites, published content is intended to be public, but allowing the full traversal of your `/data` and `/settings` directories in addition to `/content` may not be expected.
 At a minimum, governance and vigilance is required to ensure that your entire published content tree is safe to be consumed at any time.
 
-[^4]: As a security measure, Sitecore does keep some fields private from Edge. For example, the `__Created by` field is not exposed to Edge, which helps to prevent [user enumeration](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/04-Testing_for_Account_Enumeration_and_Guessable_User_Account).
+[^enumeration]: As a security measure, Sitecore does keep some fields private from Edge. For example, the `__Created by` field is not exposed to Edge, which helps to prevent [user enumeration](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/04-Testing_for_Account_Enumeration_and_Guessable_User_Account).
 
 Keep in mind that as of 5/02/2026, the `SITECORE_EDGE_CONTEXT_ID` cannot be scoped by site or site collection.
 The Context ID provides global access, so multi-site configurations increase your blast radius and governance dramatically to ensure that all content editors and developers are always publishing as though the internet is enumerating and consuming all of your Sitecore data.
@@ -110,14 +103,14 @@ An out-of-the-box setup for any reputable WAF will block (D)DoS traffic patterns
 
 ## The correct pattern: scoping context ids
 
-There is an easy way to scope context IDs to prevent unfettered edge access, and it was actually [announced](https://developers.sitecore.com/changelog/cloud-portal/31102025/context-id-management-in-cloud-portal) at the end of October 2025.[^6]
+There is an easy way to scope context IDs to prevent unfettered edge access, and it was actually [announced](https://developers.sitecore.com/changelog/cloud-portal/31102025/context-id-management-in-cloud-portal) at the end of October 2025.[^jesper-credit]
 The Sitecore portal ([https://portal.sitecorecloud.io](https://portal.sitecorecloud.io)) provides a way to generate a scoped Context ID.
 
 That means that for each environment, you should select the parent Context ID and create a scoped token that contains the different Sitecore functionality required for your frontend (e.g. Forms, Scripts, the relevant analytics identifier) but **do not include edge access.**
 This scoped token can now safely be included as your `NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID`.
 You can verify that the token was appropriately scoped locally by using the scoped token for your `SITECORE_EDGE_CONTEXT_ID` value and attempting to build your site.
 
-[^6]: Credit to [Jesper Balle](https://balle.dev/) for pointing this announcement out to me in Sitecore Slack.
+[^jesper-credit]: Credit to [Jesper Balle](https://balle.dev/) for pointing this announcement out to me in Sitecore Slack.
 
 ### Enforcing this pattern
 
@@ -126,4 +119,4 @@ It would be understandable if a confused developer used the same value for both 
 The Sitecore Deploy app still fills both `SITECORE_EDGE_CONTEXT_ID` and `NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID` with the broadly-scoped token even if you have created a scoped one to be used publicly.
 
 Each project may choose to do this differently, but it is worth adding an enforcement step to your deployments or build time validation that asserts `SITECORE_EDGE_CONTEXT_ID !== NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID`.
-Fail fast and catch this before you have to rotate your keys when someone (eventually) recognizes that you've leaked your tokens.
+Fail fast and catch this before you have to rotate your keys when you realize you've leaked your token.
