@@ -1,5 +1,6 @@
 // @ts-check
 
+import cloudflare from "@astrojs/cloudflare";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
@@ -10,10 +11,13 @@ import rehypeMermaid from "rehype-mermaid";
 export default defineConfig({
 	site: "https://sitecore.brendanholly.com",
 	trailingSlash: "never",
+
 	redirects: {
 		"/blog": "/",
 	},
+
 	integrations: [mdx(), sitemap()],
+
 	markdown: {
 		syntaxHighlight: {
 			type: "shiki",
@@ -44,6 +48,7 @@ export default defineConfig({
 			],
 		],
 	},
+
 	fonts: [
 		{
 			provider: fontProviders.local(),
@@ -68,4 +73,6 @@ export default defineConfig({
 			},
 		},
 	],
+
+	adapter: cloudflare(),
 });
