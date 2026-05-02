@@ -83,6 +83,17 @@ const schema = {
 				padding: 1em;
 				color: rgb(var(--text));
 			}
+			.prose :global(svg) {
+				display: block;
+				width: fit-content;
+				margin: 0 auto;
+			}
+			.prose :global(svg + p) {
+				text-align: center;
+				font-size: 0.875em;
+				color: rgb(var(--text-muted));
+				margin-top: 0.25em;
+			}
 			.title {
 				margin-bottom: 1em;
 				padding: 1em 0;

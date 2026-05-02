@@ -70,10 +70,12 @@ However, if bad actors have your context ID, they could theoretically mount a (D
 1. Making random, arbitrarily complex queries against your system (e.g. `search` operations).
 2. Requesting random paths that do not exist, bypassing the Experience Edge cache.
 
-```mermaid alt="A flowchart showing a simplified flow in which an HTTP request is translated into GraphQL, which is returned from Sitecore and parsed for the user."
+```mermaid title="Unprotected flow: with the context ID exposed client-side, anyone can make arbitrary GraphQL requests directly to Sitecore Experience Edge"
 graph TD;
     U[User] -->|GraphQL request| E[Sitecore Experience Edge]
 ```
+
+*Figure 1: With the context ID exposed, there are no intervention points you control to prevent an attacker from querying Experience Edge directly.*
 
 Compare that attack surface to an even minimally-hardened head application with a Web Application Firewall (WAF) proxying requests
 and the limited type of queries that can be made by hitting a SitecoreAI.[^bff-warning]
@@ -81,14 +83,16 @@ and the limited type of queries that can be made by hitting a SitecoreAI.[^bff-w
 [^bff-warning]: If you create an unauthenticated API endpoint that proxies arbitrary GraphQL requests to Experience Edge to power client-side requests, you have not meaningfully reduced the attack surface.
 Consider backend for frontend ([backend for frontend](https://learn.microsoft.com/en-us/azure/architecture/patterns/backends-for-frontends)) patterns carefully.
 
-```mermaid alt="A flowchart showing a simplified flow in which an HTTP request is translated into GraphQL, which is returned from Sitecore and parsed for the user."
+```mermaid title="Hardened flow: HTTP requests are proxied through a Web Application Firewall and head app, limiting what can reach Sitecore Experience Edge"
 graph TD;
     U[User] -->|Http request| W[Web Application Firewall]
     W[Web Application Firewall] -->  N[Head App]
     N -->|GraphQL request| E[Sitecore Experience Edge]
 ```
 
-## The correct pattern: scoping context ids
+*Figure 2: A WAF and head app constrain the type and rate of queries that can reach Experience Edge.*
+
+## Scoping context ids
 
 There is an easy way to scope context IDs to prevent unfettered edge access, and it was actually [announced](https://developers.sitecore.com/changelog/cloud-portal/31102025/context-id-management-in-cloud-portal) at the end of October 2025.[^jesper-credit]
 The Sitecore portal ([https://portal.sitecorecloud.io](https://portal.sitecorecloud.io)) provides a way to generate a scoped Context ID.
