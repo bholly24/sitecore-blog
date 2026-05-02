@@ -1,30 +1,37 @@
 {
-	"name": "blog",
-	"type": "module",
-	"version": "0.0.1",
-	"engines": {
-		"node": ">=24.15.0"
-	},
-	"scripts": {
-		"dev": "astro dev",
-		"build": "astro build",
-		"preview": "astro preview",
-		"astro": "astro",
-		"lint": "biome lint --write .",
-		"lint:ci": "biome check .",
-		"lint:fix": "biome check --write ."
-	},
-	"dependencies": {
-		"@astrojs/mdx": "^5.0.4",
-		"@astrojs/rss": "^4.0.18",
-		"@astrojs/sitemap": "^3.7.2",
-		"astro": "^6.2.1",
-		"playwright": "^1.59.1",
-		"rehype-github-alerts": "^4.2.0",
-		"rehype-mermaid": "^3.0.0",
-		"sharp": "^0.34.3"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "2.4.14"
-	}
+  "name": "blog",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=24.15.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "pnpm run build && wrangler dev",
+    "astro": "astro",
+    "lint": "biome lint --write .",
+    "lint:ci": "biome check .",
+    "lint:fix": "biome check --write .",
+    "generate-types": "wrangler types",
+    "deploy": "pnpm run build && wrangler deploy"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^13.3.0",
+    "@astrojs/mdx": "^5.0.4",
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.2",
+    "astro": "^6.2.1",
+    "playwright": "^1.59.1",
+    "rehype-github-alerts": "^4.2.0",
+    "rehype-mermaid": "^3.0.0",
+    "sharp": "^0.34.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.14",
+    "wrangler": "^4.87.0"
+  },
+  "overrides": {
+    "vite": "^7"
+  }
 }
