@@ -1,6 +1,5 @@
 // @ts-check
 
-import cloudflare from "@astrojs/cloudflare";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
@@ -10,6 +9,7 @@ import rehypeMermaid from "rehype-mermaid";
 // https://astro.build/config
 export default defineConfig({
 	site: "https://sitecore.brendanholly.com",
+	output: "static",
 	trailingSlash: "never",
 
 	redirects: {
@@ -74,5 +74,4 @@ export default defineConfig({
 		},
 	],
 
-	adapter: cloudflare(),
 });
