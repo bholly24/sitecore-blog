@@ -8,6 +8,7 @@ import rehypeMermaid from "rehype-mermaid";
 // https://astro.build/config
 export default defineConfig({
 	site: "https://sitecore.brendanholly.com",
+	trailingSlash: "never",
 	integrations: [mdx(), sitemap()],
 	markdown: {
 		syntaxHighlight: {
