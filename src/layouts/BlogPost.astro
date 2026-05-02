@@ -1,14 +1,18 @@
 ---
 import { Image } from 'astro:assets';
+import type { MarkdownHeading } from 'astro';
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import TableOfContents from '../components/TableOfContents.astro';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & { headings?: MarkdownHeading[] };
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
+const h2s = headings.filter((h) => h.depth === 2);
+const showToc = h2s.length > 2;
 ---
 
 <html lang="en">
@@ -19,6 +23,23 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				width: calc(100% - 2em);
 				max-width: 100%;
 				margin: 0;
+			}
+			.page-layout.has-toc {
+				display: grid;
+				grid-template-columns: 200px 1fr 200px;
+				column-gap: 1.5rem;
+				align-items: start;
+			}
+			.toc-sidebar {
+				position: sticky;
+				top: 5rem;
+				max-height: calc(100vh - 6rem);
+				overflow-y: auto;
+				scrollbar-width: none;
+				padding-top: 1em;
+			}
+			.toc-sidebar::-webkit-scrollbar {
+				display: none;
 			}
 			.hero-image {
 				width: 100%;
@@ -52,34 +73,62 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			.last-updated-on {
 				font-style: italic;
 			}
+			.toc-mobile {
+				display: none;
+				margin-bottom: 2em;
+			}
+			@media (max-width: 1100px) {
+				.toc-sidebar {
+					display: none;
+				}
+				.page-layout.has-toc {
+					display: block;
+					padding: 0;
+				}
+				.toc-mobile {
+					display: block;
+				}
+			}
 		</style>
 	</head>
 
 	<body>
 		<Header />
 		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
+			<div class:list={['page-layout', { 'has-toc': showToc }]}>
+				{showToc && (
+					<aside class="toc-sidebar">
+						<TableOfContents headings={h2s} />
+					</aside>
+				)}
+				<article>
+					<div class="hero-image">
+						{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
 					</div>
+					<div class="prose">
+						<div class="title">
+							<div class="date">
+								<FormattedDate date={pubDate} />
+								{
+									updatedDate && (
+										<div class="last-updated-on">
+											Last updated on <FormattedDate date={updatedDate} />
+										</div>
+									)
+								}
+							</div>
+							<h1>{title}</h1>
+							<hr />
+						</div>
+						{showToc && (
+						<div class="toc-mobile">
+							<TableOfContents headings={h2s} />
+						</div>
+					)}
 					<slot />
-				</div>
-			</article>
+					</div>
+				</article>
+			</div>
 		</main>
 		<Footer />
 	</body>
