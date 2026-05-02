@@ -35,7 +35,9 @@ const schema = {
 		url: SITE_URL,
 	},
 	url: Astro.url.toString(),
-	...(heroImage && { image: new URL(heroImage.src, Astro.site ?? SITE_URL).toString() }),
+	...(heroImage && {
+		image: new URL(heroImage.src, Astro.site ?? SITE_URL).toString(),
+	}),
 };
 ---
 
