@@ -1,6 +1,6 @@
 ---
-title: 'SitecoreAI Context ID Security'
-description: 'Discover best practices to securely manage SitecoreAI Context IDs with the Content SDK'
+title: 'Scoping Your SitecoreAI Context IDs'
+description: 'Discover the right way to securely manage SitecoreAI Context IDs for the Content SDK'
 pubDate: 'May 02 2026'
 heroImage: '../../assets/posts/scoping.jpg'
 ---
@@ -16,8 +16,8 @@ By default, each environment in SitecoreAI is provisioned with a preview and a l
 Previously, Sitecore JSS <span class="tag-deprecated">deprecated</span> required your context ID in a server-side environment variable `SITECORE_EDGE_CONTEXT_ID`, which is secure by default.
 [^token]: The preview context ID allows you to make requests against the [Preview endpoint](https://doc.sitecore.com/sai/en/developers/sitecoreai/the-preview-graphql-endpoint.html) that serves content from CM (for content managers and small-scale preview sites) while the live ID makes requests against Experience Edge.
 
-The new headless delivery layer for SitecoreAI, the Content SDK, introduces the "soft" requirement for a client-side value `NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID` along with the required server-side environemnt variable.[^public]
-The [migration documentation](https://doc.sitecore.com/sai/en/developers/content-sdk/10/upgrade-jss-22-0-next-js-apps-to-content-sdk-1-5-1.html#update-configurations-and-environment-variables)[^extracted] suggests you may not need the value, but warns that creating it **will expose your token to the internet.**
+The new headless delivery layer for SitecoreAI, the Content SDK, introduces a new client-side value `NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID` along with the required server-side environment variable.[^public]
+The [migration documentation](https://doc.sitecore.com/sai/en/developers/content-sdk/10/upgrade-jss-22-0-next-js-apps-to-content-sdk-1-5-1.html#update-configurations-and-environment-variables)[^extracted] suggests you may not need the value, and warns that setting it **will expose your token to the internet.**
 
 [^public]: If you're confused about public/private or client-side/server-side variables check out the [Next docs](https://nextjs.org/docs/pages/guides/environment-variables#bundling-environment-variables-for-the-browser).
 [^extracted]: Extracted 5/02/2026. Sitecore said they would work on updating this documentation to call out scoping as the correct path forward.
@@ -25,8 +25,8 @@ The [migration documentation](https://doc.sitecore.com/sai/en/developers/content
 > If needed, create NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID with the same value.
 > Doing this will expose your context ID secret on the client.
 
-While the documentation seems to suggest it is uncommon for `NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID` to be set,
-it is required for Sitecore forms and several other basic Sitecore features, as you can see in the `Bootstrap.tsx` file.[^code-date]
+While the documentation seems to suggest it is uncommon for `NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID` to be necessary,
+it is required out of the box for Sitecore forms and several other basic Sitecore features, as you can see in the `Bootstrap.tsx` file.[^code-date]
 None of these features work if `config.api.edge?.clientContextId` is not set.
 [^code-date]: Extracted 5/1/2026 from Sitecore's [XM Cloud Starter repository](https://github.com/Sitecore/xmcloud-starter-js)
 
@@ -48,12 +48,12 @@ if (config.api.edge?.clientContextId) {
 ## Why keep your edge context ID private?
 
 For a large number of sites, it may seem reasonable to allow your Context ID to be public.
-For a developer following the docs, it has *appeared* like this may be the only way forward.
+For a developer following the migration docs, it has *appeared* like this may be the only way forward.
 However, exposing your context ID broadens your system's attack surface by allowing for broad content enumeration and potential (D)DoS attacks.
 
 ### Content enumeration
 
-An unscoped context ID is an easy vector for site-wide enumeration.[^enumeration]
+An unscoped context ID is a clear vector for site-wide enumeration.[^enumeration]
 Anyone with the token can query your Sitecore root and traverse your entire tree by recursively requesting the `children` of each item.
 For the vast majority of sites, published content is public, but allowing the full traversal of your `/data` and `/settings` directories in addition to `/content` may not be expected.
 At a minimum, governance and vigilance is required to ensure that the entire published content tree is safe for public consumption.
@@ -80,7 +80,7 @@ graph TD;
 *Figure 1: With the context ID exposed, there are no intervention points you control to prevent an attacker from querying Experience Edge directly.*
 
 Compare that attack surface to an even minimally-hardened head application with a Web Application Firewall (WAF) proxying requests
-and the narrower set of queries that can be made by https GET requests to a SitecoreAI head app.[^bff-warning]
+and the narrower set of queries that a Next.js head app will make to render an http request.[^bff-warning]
 
 [^bff-warning]: If you create an unauthenticated API endpoint that proxies arbitrary GraphQL requests to Experience Edge to power client-side requests, you have not meaningfully reduced the attack surface.
 Consider backend for frontend ([backend for frontend](https://learn.microsoft.com/en-us/azure/architecture/patterns/backends-for-frontends)) patterns carefully.
@@ -116,7 +116,7 @@ There are a number of ways to verify the token was scoped correctly, but one sim
 ## Enforcing scoped context ids
 
 Once you're aware of this pattern, it's trivial to implement it, but you'll want some way to enforce this pattern on larger teams.
-It's far to easy to accidentally use your broadly-scoped Context ID as the client-side variable.
+It's far too easy to accidentally use your broadly-scoped Context ID as the client-side variable.
 Given the current lack of visibility into scoped Context IDs outside the Sitecore Portal, a developer might accidentally use the same value client and server-side after regenerating context IDs.
 
 > [!Warning]

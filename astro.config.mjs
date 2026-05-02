@@ -10,6 +10,9 @@ import rehypeMermaid from "rehype-mermaid";
 export default defineConfig({
 	site: "https://sitecore.brendanholly.com",
 	trailingSlash: "never",
+	redirects: {
+		"/blog": "/",
+	},
 	integrations: [mdx(), sitemap()],
 	markdown: {
 		syntaxHighlight: {
