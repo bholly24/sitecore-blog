@@ -7,6 +7,7 @@ import Footer from "../components/Footer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import Header from "../components/Header.astro";
 import TableOfContents from "../components/TableOfContents.astro";
+import { SITE_AUTHOR, SITE_URL } from "../consts";
 
 type Props = CollectionEntry<"blog">["data"] & { headings?: MarkdownHeading[] };
 
@@ -20,6 +21,24 @@ const {
 } = Astro.props;
 const h2s = headings.filter((h) => h.depth === 2);
 const showToc = h2s.length > 2;
+
+const schema = {
+	"@context": "https://schema.org",
+	"@type": "BlogPosting",
+	headline: title,
+	description,
+	datePublished: pubDate.toISOString(),
+	dateModified: (updatedDate ?? pubDate).toISOString(),
+	author: {
+		"@type": "Person",
+		name: SITE_AUTHOR,
+		url: SITE_URL,
+	},
+	url: Astro.url.toString(),
+	...(heroImage && {
+		image: new URL(heroImage.src, Astro.site ?? SITE_URL).toString(),
+	}),
+};
 ---
 
 <html lang="en">
@@ -97,6 +116,7 @@ const showToc = h2s.length > 2;
 				}
 			}
 		</style>
+		<script type="application/ld+json" set:html={JSON.stringify(schema)} />
 	</head>
 
 	<body>
@@ -110,7 +130,7 @@ const showToc = h2s.length > 2;
 				)}
 				<article>
 					<div class="hero-image">
-						{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
+						{heroImage && <Image width={1020} height={510} src={heroImage} alt="" loading={"eager"} />}
 					</div>
 					<div class="prose">
 						<div class="title">
