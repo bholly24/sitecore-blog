@@ -9,7 +9,6 @@ const { headings } = Astro.props;
 ---
 
 <nav aria-label="Table of contents">
-	<p class="toc-label">On this page</p>
 	<ol>
 		{headings.map((h) => (
 			<li>
@@ -21,17 +20,9 @@ const { headings } = Astro.props;
 
 <style>
 	nav {
-		border-left: 2px solid rgb(var(--gray-light));
+		border-left: 2px solid rgb(var(--surface));
 		padding-left: 1rem;
-		font-size: 0.875rem;
-	}
-	.toc-label {
-		margin: 0 0 0.75rem;
-		font-size: 0.7rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: rgb(var(--gray));
+		font-size: 1rem;
 	}
 	ol {
 		list-style: none;
@@ -45,13 +36,13 @@ const { headings } = Astro.props;
 		line-height: 1.4;
 	}
 	a {
-		color: rgb(var(--gray));
+		color: rgb(var(--text-muted));
 		text-decoration: none;
 		transition: color 0.15s ease;
 		display: block;
 	}
 	a:visited {
-		color: rgb(var(--gray));
+		color: rgb(var(--text-muted));
 	}
 	a:hover {
 		color: var(--accent);
