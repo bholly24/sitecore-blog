@@ -3,5 +3,7 @@
 
 export const SITE_TITLE = "Brendan Holly";
 export const SITE_DESCRIPTION = "Notes on SitecoreAI architecture and patterns";
+export const SITE_AUTHOR = "Brendan Holly";
+export const SITE_URL = "https://sitecore.brendanholly.com";
 export const GITHUB_URL = "https://github.com/bholly24";
 export const LINKEDIN_URL = "https://www.linkedin.com/in/brendan-holly/";
