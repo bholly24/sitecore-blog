@@ -1,12 +1,12 @@
 :root {
 	--accent: #7c8cff;
 	--accent-dark: #4f5bff;
-	--black: 240, 242, 250;
-	--gray: 130, 140, 170;
-	--gray-light: 28, 32, 48;
-	--gray-dark: 210, 218, 235;
+	--text-bright: 200, 202, 210;
+	--text-muted: 130, 140, 170;
+	--surface: 28, 32, 48;
+	--text: 170, 178, 195;
 	--body-bg: #0f1117;
-	--gray-gradient: rgba(var(--gray-light), 80%), var(--body-bg);
+	--bg-gradient: rgba(var(--surface), 80%), var(--body-bg);
 	--box-shadow:
 		0 2px 6px rgba(110, 110, 110, 40%), 0 8px 24px rgba(110, 1110, 1110, 33%),
 		0 16px 32px rgba(110, 110, 110, 33%);
@@ -16,11 +16,11 @@ body {
 	margin: 0;
 	padding: 0;
 	text-align: left;
-	background: var(--body-bg) linear-gradient(var(--gray-gradient)) no-repeat;
+	background: var(--body-bg) linear-gradient(var(--bg-gradient)) no-repeat;
 	background-size: 100% 600px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
-	color: rgb(var(--gray-dark));
+	color: rgb(var(--text));
 	font-size: 18px;
 	line-height: 1.7;
 	display: flex;
@@ -41,7 +41,7 @@ h4,
 h5,
 h6 {
 	margin: 0 0 0.5rem 0;
-	color: rgb(var(--black));
+	color: rgb(var(--text-bright));
 	line-height: 1.2;
 }
 h1 {
@@ -95,7 +95,7 @@ img {
 }
 code {
 	padding: 2px 5px;
-	background-color: rgb(var(--gray-light));
+	background-color: rgb(var(--surface));
 	border-radius: 2px;
 	color: var(--accent);
 }
@@ -106,11 +106,11 @@ pre {
 
 	/* Force visible scrollbar on macOS/iOS where they auto-hide */
 	scrollbar-width: thin; /* Firefox */
-	scrollbar-color: rgba(var(--gray-dark), 0.3) transparent;
+	scrollbar-color: rgba(var(--text), 0.3) transparent;
 	background-image: linear-gradient(
 		to right,
 		transparent calc(100% - 32px),
-		rgba(var(--gray-light), 0.9) 100%
+		rgba(var(--surface), 0.9) 100%
 	);
 	background-attachment: local;
 }
@@ -130,12 +130,12 @@ pre::-webkit-scrollbar-track {
 }
 
 pre::-webkit-scrollbar-thumb {
-	background-color: rgba(var(--gray-dark), 0.25);
+	background-color: rgba(var(--text), 0.25);
 	border-radius: 4px;
 }
 
 pre::-webkit-scrollbar-thumb:hover {
-	background-color: rgba(var(--gray-dark), 0.4);
+	background-color: rgba(var(--text), 0.4);
 }
 
 blockquote {
@@ -146,7 +146,7 @@ blockquote {
 }
 hr {
 	border: none;
-	border-top: 1px solid rgb(var(--gray-light));
+	border-top: 1px solid rgb(var(--surface));
 }
 sup {
 	padding-left: 0.1em;
@@ -172,12 +172,12 @@ sup {
 }
 a[href*="sitecore.com"],
 a[href*="sitecorecontenthub.com"] {
-	color: white;
+	color: var(--text-bright);
 }
 
 a[href*="sitecore.com"]:visited,
 a[href*="sitecorecontenthub.com"]:visited {
-	color: white;
+	color: var(--text-bright);
 }
 
 a[href*="sitecore.com"]::after,
