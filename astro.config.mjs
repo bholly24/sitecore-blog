@@ -3,6 +3,7 @@
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
+import { rehypeGithubAlerts } from "rehype-github-alerts";
 import rehypeMermaid from "rehype-mermaid";
 
 // https://astro.build/config
@@ -16,6 +17,7 @@ export default defineConfig({
 			excludeLangs: ["mermaid", "math"],
 		},
 		rehypePlugins: [
+			rehypeGithubAlerts,
 			[rehypeMermaid, {
 				strategy: "inline-svg",
 				mermaidConfig: {

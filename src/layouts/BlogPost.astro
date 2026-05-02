@@ -3,6 +3,7 @@ import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import type { MarkdownHeading } from "astro";
 import BaseHead from "../components/BaseHead.astro";
+import "rehype-github-alerts/styling/css/index.css";
 import Footer from "../components/Footer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import Header from "../components/Header.astro";
@@ -83,7 +84,7 @@ const schema = {
 				padding: 1em;
 				color: rgb(var(--text));
 			}
-			.prose :global(svg) {
+			.prose :global(svg[role~="graphics-document"]) {
 				display: block;
 				width: fit-content;
 				margin: 0 auto;
@@ -93,6 +94,13 @@ const schema = {
 				font-size: 0.875em;
 				color: rgb(var(--text-muted));
 				margin-top: 0.25em;
+			}
+			.prose :global([data-footnotes]) {
+				margin-top: 3em;
+				padding-top: 1.5em;
+				border-top: 1px solid rgb(var(--surface));
+				font-size: 0.875em;
+				color: rgb(var(--text-muted));
 			}
 			.title {
 				margin-bottom: 1em;
