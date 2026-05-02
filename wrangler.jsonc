@@ -4,5 +4,11 @@
 	"assets": {
 		"directory": "./dist",
 		"not_found_handling": "404-page"
-	}
+	},
+	"routes": [
+		{
+			"custom_domain": true,
+			"pattern": "sitecore.brendanholly.com"
+		}
+	]
 }
