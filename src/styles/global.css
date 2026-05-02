@@ -16,10 +16,8 @@ body {
 	margin: 0;
 	padding: 0;
 	text-align: left;
-	background-color: var(--body-bg);
-	background: linear-gradient(var(--gray-gradient)) no-repeat;
+	background: var(--body-bg) linear-gradient(var(--gray-gradient)) no-repeat;
 	background-size: 100% 600px;
-	background-color: var(--body-bg);
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	color: rgb(var(--gray-dark));
@@ -103,12 +101,12 @@ pre {
 	overflow-x: auto;
 
 	/* Force visible scrollbar on macOS/iOS where they auto-hide */
-	scrollbar-width: thin;  /* Firefox */
+	scrollbar-width: thin; /* Firefox */
 	scrollbar-color: rgba(var(--gray-dark), 0.3) transparent;
 	background-image: linear-gradient(
-			to right,
-			transparent calc(100% - 32px),
-			rgba(var(--gray-light), 0.9) 100%
+		to right,
+		transparent calc(100% - 32px),
+		rgba(var(--gray-light), 0.9) 100%
 	);
 	background-attachment: local;
 }
@@ -157,25 +155,17 @@ sup {
 		padding: 1em;
 	}
 }
-
+/* Utility for screen reader text that should be hidden otherwise */
 .sr-only {
-	border: 0;
-	padding: 0;
-	margin: 0;
-	position: absolute !important;
-	height: 1px;
+	position: absolute;
 	width: 1px;
+	height: 1px;
+	padding: 0;
 	overflow: hidden;
-	/* IE6, IE7 - a 0 height clip, off to the bottom right of the visible 1px box */
-	clip: rect(1px 1px 1px 1px);
-	/* maybe deprecated but we need to support legacy browsers */
-	clip: rect(1px, 1px, 1px, 1px);
-	/* modern browsers, clip-path works inwards from each corner */
 	clip-path: inset(50%);
-	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
 	white-space: nowrap;
+	border: 0;
 }
-
 a[href*="sitecore.com"],
 a[href*="sitecorecontenthub.com"] {
 	color: white;
