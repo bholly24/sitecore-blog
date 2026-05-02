@@ -61,7 +61,7 @@ At a minimum, governance and vigilance is required to ensure that the entire pub
 [^enumeration]: As a security measure, Sitecore does keep some fields private from Edge. For example, the `__Created by` field is not exposed to Edge, which helps to prevent [user enumeration](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/04-Testing_for_Account_Enumeration_and_Guessable_User_Account).
 
 >[!NOTE]
-> Keep in mind that currently, the `SITECORE_EDGE_CONTEXT_ID` cannot be scoped by site or site collection.
+> Currently, the ability to access edge granted by the `SITECORE_EDGE_CONTEXT_ID` cannot be scoped by site or site collection.
 > The Context ID provides global access, so multi-site instances increase your blast radius and governance burden.
 
 ### Limiting your denial of service (DoS) attack surface
