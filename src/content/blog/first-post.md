@@ -2,7 +2,7 @@
 title: 'SitecoreAI Context ID Security'
 description: 'Best practices to securely manage Context IDs for security across enterprise projects'
 pubDate: 'May 02 2026'
-heroImage: '../../assets/scoping.jpg'
+heroImage: '../../assets/posts/scoping.jpg'
 ---
 
 ## Intro
