@@ -179,7 +179,7 @@ a[href*="sitecorecontenthub.com"]::after {
 	height: 0.9em;
 	margin-left: 0.3em;
 	vertical-align: -0.15em;
-	background-image: url("https://www.google.com/s2/favicons?domain=sitecore.com&sz=48");
+	background-image: url("/public/sitecore.svg");
 	background-size: contain;
 	background-repeat: no-repeat;
 }
