@@ -56,8 +56,8 @@ However, exposing your context ID broadens your system's attack surface by allow
 
 An unscoped context ID is a clear vector for site-wide enumeration.[^enumeration]
 Anyone with the token can query your Sitecore root and traverse your entire tree by recursively requesting the `children` of each item.
-For the vast majority of sites, published content is public, but allowing the full traversal of your `/data` and `/settings` directories in addition to `/content` may not be expected.
-At a minimum, governance and vigilance is required to ensure that the entire published content tree is safe for public consumption.
+For most sites, published content is public, but allowing the full traversal of your `/data` and `/settings` directories in addition to `/content` may not be expected.
+At a minimum, governance and vigilance is required to ensure that the entire published tree is safe for public consumption.
 
 [^enumeration]: As a security measure, Sitecore does keep some fields private from Edge. For example, the `__Created by` field is not exposed to Edge, which helps to prevent [user enumeration](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/04-Testing_for_Account_Enumeration_and_Guessable_User_Account).
 
@@ -65,7 +65,7 @@ At a minimum, governance and vigilance is required to ensure that the entire pub
 > Currently, the ability to access edge granted by the `SITECORE_EDGE_CONTEXT_ID` cannot be scoped by site or site collection.
 > The context ID provides global access, so multi-site instances increase your blast radius and governance burden.
 
-### Limiting your denial of service (DoS) attack surface
+### Limiting your denial of service attack surface
 
 As a SaaS service, Experience Edge has a [rate limit](https://doc.sitecore.com/sai/en/developers/sitecoreai/limitations-and-restrictions-of-experience-edge.html#graphql-api-and-query-behavior) of 80 **uncached** requests per second.
 Sitecore's caching protects origin a lot, and combined with head app practices like Incremental Static Regeneration ([ISR](https://nextjs.org/docs/app/guides/incremental-static-regeneration)), this is typically not a major concern for most projects.
@@ -101,7 +101,7 @@ There is a much simpler way to securely enable Sitecore features clientside.
 
 ## Scoping context ids
 
-Sitecore has created a GUI to scope context IDs so that they do not include edge access, and it was actually [deployed](https://developers.sitecore.com/changelog/cloud-portal/31102025/context-id-management-in-cloud-portal) at the end of October 2025.[^jesper-credit]
+Sitecore created a GUI to scope context IDs so that they do not include edge access, and it was actually [deployed](https://developers.sitecore.com/changelog/cloud-portal/31102025/context-id-management-in-cloud-portal) at the end of October 2025.[^jesper-credit]
 The Sitecore portal ([https://portal.sitecorecloud.io](https://portal.sitecorecloud.io)) provides a simple way to generate a scoped context ID.
 
 [^jesper-credit]: Credit to [Jesper Balle](https://balle.dev/) for pointing this announcement out to me in Sitecore Slack.
@@ -116,12 +116,12 @@ There are a number of ways to verify the token was scoped correctly, but one sim
 
 ## Enforcing scoped context ids
 
-Once you're aware of this pattern, it's trivial to implement it, but you'll want some way to enforce this pattern on larger teams.
+Once you're aware of this pattern, it's trivial to implement it, but you'll want some way to enforce it on larger teams.
 It's far too easy to accidentally use your broadly-scoped context ID as the client-side variable.
 Given the current lack of visibility into scoped context IDs outside the Sitecore Portal, a developer might accidentally use the same value client and server-side after regenerating context IDs.
 
 > [!Warning]
-> There remains an insecure default in the Deploy application's [Developer Settings](https://doc.sitecore.com/sai/en/developers/sitecoreai/access-the-environment-variables-for-a-site.html) tab that provides access to environment variables -- the first place most developers learn to get the context ID from.
+> There is an insecure default in the Deploy application's [Developer Settings](https://doc.sitecore.com/sai/en/developers/sitecoreai/access-the-environment-variables-for-a-site.html) tab that provides access to environment variables -- the first place most developers learn to get the context ID from.
 > No matter how many scoped context IDs you create, the Sitecore Deploy app still fills both `SITECORE_EDGE_CONTEXT_ID` and `NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID` with your broadly-scoped context ID.
 
 Configure a step that asserts `SITECORE_EDGE_CONTEXT_ID !== NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID` in your build pipeline.
