@@ -112,15 +112,14 @@ const schema = {
 				text-align: center;
 				line-height: 1;
 			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
+
 			.date {
 				margin-bottom: 0.5em;
 				color: rgb(var(--text-muted));
 			}
 			.last-updated-on {
 				font-style: italic;
+				padding-top: 0.5em;
 			}
 			.toc-mobile {
 				display: none;
@@ -175,17 +174,17 @@ const schema = {
 					</div>
 					<div class="prose">
 						<div class="title">
+							<h1>{title}</h1>
 							<div class="date">
 								<FormattedDate date={pubDate} />
 								{
 									updatedDate && (
-										<div class="last-updated-on">
-											Last updated on <FormattedDate date={updatedDate} />
-										</div>
+										<span class="last-updated-on">
+											&nbsp;· Updated <FormattedDate date={updatedDate} />
+										</span>
 									)
 								}
 							</div>
-							<h1>{title}</h1>
 							<hr />
 						</div>
 						{showToc && (
