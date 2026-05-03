@@ -11,13 +11,10 @@ export default defineConfig({
 	site: "https://sitecore.brendanholly.com",
 	output: "static",
 	trailingSlash: "never",
-
 	redirects: {
 		"/blog": "/",
 	},
-
 	integrations: [mdx(), sitemap()],
-
 	markdown: {
 		syntaxHighlight: {
 			type: "shiki",
