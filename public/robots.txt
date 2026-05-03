@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sitecore.brendanholly.com/sitemap-index.xml
